@@ -10,22 +10,18 @@ import android.webkit.WebView
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 
-@SuppressLint("StaticFieldLeak")
-private lateinit var webView: WebView
-@SuppressLint("StaticFieldLeak")
-private lateinit var customView: FrameLayout
-
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var webView: WebView
+    private lateinit var customView: FrameLayout
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         webView = findViewById(R.id.webview)
-        webView.webChromeClient = object: MyWebChromeClient(){}
-
         customView = findViewById(R.id.customView)
+
+        webView.webChromeClient = object: MyWebChromeClient(webView, customView){}
         webView.loadUrl("https://youtube-lite.js.org/")
 
         val webSettings: WebSettings = webView.settings
@@ -37,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-open class MyWebChromeClient : WebChromeClient() {
+open class MyWebChromeClient(private val webView:WebView, private val customView:FrameLayout) : WebChromeClient() {
     override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
         super.onShowCustomView(view, callback)
         webView.visibility = View.GONE
